@@ -1,10 +1,12 @@
 var express = require('express')
 var bodyParser = require('body-parser')
 const nodemailer = require ('nodemailer')
+const cors = require('cors')
 
 
 var app = express()
 
+app.use(cors())
 app.use(bodyParser.json())
 
 const transporter = nodemailer.createTransport({
@@ -26,13 +28,15 @@ app.post('/dados', (req,res)=>{
 
     let analise = req.body
     const mailOptions = {
-        from: 'caiuagomes@gmail.com',
-        to: 'caiua_franca@hotmail.com',
-        subject: 'E-mail enviado usando Node!',
-        text: 'Valor Acima do esperado ' + JSON.stringify(req.body.value)
+        from: 'bi.alertas@ale.com.br',
+        to: 'bi.alertas@ale.com.br',
+        subject: 'Alertas BI - Valor de Faturamento',
+        text: 'Valor de Faturamento: ' + JSON.stringify(req.body.value) 
+                                       + ' operando abaixo da Meta: ' 
+                                       + JSON.stringify(req.body.meta)
     };
 
-    if(analise.value === '75'){
+    if(Number(analise.value.value) < analise.meta){
         transporter.sendMail(mailOptions, function(error, info){
             if (error) {
               console.log('Deu Erro no Envio.... \n'+error);
